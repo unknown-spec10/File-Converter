@@ -74,6 +74,7 @@ if st.button("Convert", type="primary", use_container_width=True):
                 st.session_state.converted_filename = result_file.name  # type: ignore
             
             st.success("✓ Conversion complete!")
+            st.rerun()  # Force rerun to show download button
             
         except Exception as e:
             st.error(f"❌ Conversion failed: {str(e)}")
