@@ -31,13 +31,16 @@ except Exception:
     _libreoffice_available = False
 
 
-def convert(input_path: str, output_path: str, method: str = 'auto') -> None:
+def convert(input_path: str, output_path: str, method: str = 'auto') -> str:
     """Convert DOCX to PDF with best available method.
     
     Args:
         input_path: Path to input DOCX file
         output_path: Path to output PDF file
         method: Conversion method ('auto', 'libreoffice', 'docx2pdf')
+    
+    Returns:
+        Path to output PDF file
     
     Raises:
         RuntimeError: If no conversion method is available
@@ -61,8 +64,9 @@ def convert(input_path: str, output_path: str, method: str = 'auto') -> None:
             raise RuntimeError('LibreOffice not available')
         logger.info('Converting DOCX to PDF using LibreOffice (high accuracy)...')
         converter = LibreOfficeConverter()
-        converter.convert(input_path, output_path, 'pdf')
-        logger.info(f'✓ LibreOffice conversion complete: {output_path}')
+        result = converter.convert(input_path, output_path, 'pdf')
+        logger.info(f'✓ LibreOffice conversion complete: {result}')
+        return result
         
     elif method == 'docx2pdf':
         if not _docx2pdf_convert:
@@ -70,6 +74,7 @@ def convert(input_path: str, output_path: str, method: str = 'auto') -> None:
         logger.info('Converting DOCX to PDF using docx2pdf...')
         _docx2pdf_convert(input_path, output_path)
         logger.info(f'✓ docx2pdf conversion complete: {output_path}')
+        return output_path
         
     else:
         raise ValueError(f'Unknown conversion method: {method}')
