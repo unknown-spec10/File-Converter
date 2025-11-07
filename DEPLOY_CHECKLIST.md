@@ -36,7 +36,7 @@ git push -u origin main
 - Click "New app"
 - Repository: `YOUR-USERNAME/YOUR-REPO`
 - Branch: `main`
-- Main file path: `FileConverter/streamlit_app.py`
+- Main file path: `streamlit_app.py`
 - Click "Deploy"
 
 ### 3. Add Secrets

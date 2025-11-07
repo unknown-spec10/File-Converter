@@ -15,7 +15,7 @@
    - Go to [share.streamlit.io](https://share.streamlit.io)
    - Click "New app"
    - Select your GitHub repository
-   - Set main file path: `FileConverter/streamlit_app.py`
+   - Set main file path: `streamlit_app.py`
    - Click "Deploy"
 
 3. **Add Groq API Key**
@@ -143,7 +143,7 @@ Visit: http://localhost:8501
 - [ ] packages.txt includes all system dependencies
 - [ ] requirements.txt is up to date
 - [ ] App tested locally
-- [ ] Main file path: `FileConverter/streamlit_app.py`
+- [ ] Main file path: `streamlit_app.py`
 
 ## 🎉 Post-Deployment
 
