@@ -13,6 +13,12 @@ from FileConverter.utils.file_utils import get_extension
 
 st.set_page_config(page_title="File Converter", layout="centered", page_icon="🔄")
 
+# Initialize session state
+if 'converted_file' not in st.session_state:  # type: ignore
+    st.session_state.converted_file = None  # type: ignore
+if 'converted_filename' not in st.session_state:  # type: ignore
+    st.session_state.converted_filename = None  # type: ignore
+
 # Header
 st.title("🔄 File Converter")
 st.write("Upload a file and select target format")
@@ -21,6 +27,9 @@ st.write("Upload a file and select target format")
 uploaded = st.file_uploader("Upload file", type=list(get_supported_conversions().keys()))
 
 if not uploaded:
+    # Reset session state when no file
+    st.session_state.converted_file = None  # type: ignore
+    st.session_state.converted_filename = None  # type: ignore
     st.stop()
 
 # File uploaded - process it
@@ -52,34 +61,32 @@ if st.button("Convert", type="primary", use_container_width=True):
         try:
             result_path = convert(str(input_path), str(output_path))
             
-            # Debug: Show what path was returned
-            st.write(f"Debug: Result path = {result_path}")
-            
             # Verify the output file exists
             result_file = Path(result_path)
-            st.write(f"Debug: File exists = {result_file.exists()}")
             
             if not result_file.exists():
-                st.error(f"❌ Conversion completed but output file not found: {result_path}")
+                st.error(f"❌ Output file not found: {result_path}")
                 st.stop()
+            
+            # Read the file and store in session state
+            with open(result_file, "rb") as f:
+                st.session_state.converted_file = f.read()  # type: ignore
+                st.session_state.converted_filename = result_file.name  # type: ignore
             
             st.success("✓ Conversion complete!")
             
-            # Read the file and create download button
-            try:
-                with open(result_file, "rb") as f:
-                    file_data = f.read()
-                
-                st.download_button(
-                    label="⬇️ Download",
-                    data=file_data,
-                    file_name=result_file.name,
-                    mime="application/octet-stream",
-                    type="primary",
-                    use_container_width=True
-                )
-            except Exception as read_err:
-                st.error(f"❌ Failed to read output file: {read_err}")
-            
         except Exception as e:
             st.error(f"❌ Conversion failed: {str(e)}")
+            st.session_state.converted_file = None  # type: ignore
+            st.session_state.converted_filename = None  # type: ignore
+
+# Show download button if conversion was successful
+if st.session_state.converted_file is not None:  # type: ignore
+    st.download_button(
+        label="⬇️ Download",
+        data=st.session_state.converted_file,  # type: ignore
+        file_name=st.session_state.converted_filename,  # type: ignore
+        mime="application/octet-stream",
+        type="primary",
+        use_container_width=True
+    )
