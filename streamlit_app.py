@@ -74,7 +74,12 @@ if st.button("Convert", type="primary", use_container_width=True):
                 st.session_state.converted_filename = result_file.name  # type: ignore
             
             st.success("✓ Conversion complete!")
-            st.rerun()  # Force rerun to show download button
+            
+            # Force rerun to show download button (support both old and new Streamlit versions)
+            try:
+                st.rerun()
+            except AttributeError:
+                st.experimental_rerun()  # Fallback for older Streamlit versions
             
         except Exception as e:
             st.error(f"❌ Conversion failed: {str(e)}")

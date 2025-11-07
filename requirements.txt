@@ -10,4 +10,4 @@ pdfplumber
 pytesseract
 groq
 python-dotenv
-streamlit
+streamlit>=1.27.0
