@@ -52,18 +52,34 @@ if st.button("Convert", type="primary", use_container_width=True):
         try:
             result_path = convert(str(input_path), str(output_path))
             
+            # Debug: Show what path was returned
+            st.write(f"Debug: Result path = {result_path}")
+            
+            # Verify the output file exists
+            result_file = Path(result_path)
+            st.write(f"Debug: File exists = {result_file.exists()}")
+            
+            if not result_file.exists():
+                st.error(f"❌ Conversion completed but output file not found: {result_path}")
+                st.stop()
+            
             st.success("✓ Conversion complete!")
             
-            # Download button
-            with open(result_path, "rb") as f:
+            # Read the file and create download button
+            try:
+                with open(result_file, "rb") as f:
+                    file_data = f.read()
+                
                 st.download_button(
                     label="⬇️ Download",
-                    data=f.read(),
-                    file_name=Path(result_path).name,
+                    data=file_data,
+                    file_name=result_file.name,
                     mime="application/octet-stream",
                     type="primary",
                     use_container_width=True
                 )
+            except Exception as read_err:
+                st.error(f"❌ Failed to read output file: {read_err}")
             
         except Exception as e:
             st.error(f"❌ Conversion failed: {str(e)}")
