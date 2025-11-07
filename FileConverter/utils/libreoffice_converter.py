@@ -144,8 +144,8 @@ class LibreOfficeConverter:
             self.soffice_path,
             '--headless',
             '--convert-to', output_format.lower(),
-            '--outdir', output_dir,
-            input_path
+            '--outdir', os.path.abspath(output_dir),
+            os.path.abspath(input_path)
         ]
         
         try:
@@ -164,10 +164,23 @@ class LibreOfficeConverter:
             
             # LibreOffice creates output with same name but different extension
             input_basename = os.path.splitext(os.path.basename(input_path))[0]
-            expected_output = os.path.join(output_dir, f'{input_basename}.{output_format}')
+            expected_output = os.path.join(os.path.abspath(output_dir), f'{input_basename}.{output_format}')
+            
+            # Wait a bit for file system to catch up
+            import time
+            max_wait = 5
+            wait_time = 0
+            while not os.path.isfile(expected_output) and wait_time < max_wait:
+                time.sleep(0.5)
+                wait_time += 0.5
             
             if not os.path.isfile(expected_output):
-                raise RuntimeError(f'Output file not created: {expected_output}')
+                # Debug: List all files in output directory
+                output_files = os.listdir(os.path.abspath(output_dir))
+                raise RuntimeError(
+                    f'Output file not created: {expected_output}\n'
+                    f'Files in output dir: {output_files}'
+                )
             
             # If user specified exact output path, rename if needed
             if not os.path.isdir(output_path) and expected_output != os.path.abspath(output_path):
