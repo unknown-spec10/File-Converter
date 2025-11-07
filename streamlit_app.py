@@ -79,7 +79,7 @@ if st.button("Convert", type="primary", use_container_width=True):
             try:
                 st.rerun()
             except AttributeError:
-                st.experimental_rerun()  # Fallback for older Streamlit versions
+                st.experimental_rerun()  # type: ignore  # Fallback for older Streamlit versions
             
         except Exception as e:
             st.error(f"❌ Conversion failed: {str(e)}")
