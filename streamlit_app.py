@@ -13,12 +13,6 @@ from FileConverter.utils.file_utils import get_extension
 
 st.set_page_config(page_title="File Converter", layout="centered", page_icon="🔄")
 
-# Initialize session state
-if 'converted_file' not in st.session_state:  # type: ignore
-    st.session_state.converted_file = None  # type: ignore
-if 'converted_filename' not in st.session_state:  # type: ignore
-    st.session_state.converted_filename = None  # type: ignore
-
 # Header
 st.title("🔄 File Converter")
 st.write("Upload a file and select target format")
@@ -27,9 +21,6 @@ st.write("Upload a file and select target format")
 uploaded = st.file_uploader("Upload file", type=list(get_supported_conversions().keys()))
 
 if not uploaded:
-    # Reset session state when no file
-    st.session_state.converted_file = None  # type: ignore
-    st.session_state.converted_filename = None  # type: ignore
     st.stop()
 
 # File uploaded - process it
@@ -68,31 +59,21 @@ if st.button("Convert", type="primary", use_container_width=True):
                 st.error(f"❌ Output file not found: {result_path}")
                 st.stop()
             
-            # Read the file and store in session state
+            # Read the file
             with open(result_file, "rb") as f:
-                st.session_state.converted_file = f.read()  # type: ignore
-                st.session_state.converted_filename = result_file.name  # type: ignore
+                file_data = f.read()
             
             st.success("✓ Conversion complete!")
             
-            # Force rerun to show download button (support both old and new Streamlit versions)
-            try:
-                st.rerun()
-            except AttributeError:
-                st.experimental_rerun()  # type: ignore  # Fallback for older Streamlit versions
+            # Show download button immediately
+            st.download_button(
+                label="⬇️ Download",
+                data=file_data,
+                file_name=result_file.name,
+                mime="application/octet-stream",
+                type="primary",
+                use_container_width=True
+            )
             
         except Exception as e:
             st.error(f"❌ Conversion failed: {str(e)}")
-            st.session_state.converted_file = None  # type: ignore
-            st.session_state.converted_filename = None  # type: ignore
-
-# Show download button if conversion was successful
-if st.session_state.converted_file is not None:  # type: ignore
-    st.download_button(
-        label="⬇️ Download",
-        data=st.session_state.converted_file,  # type: ignore
-        file_name=st.session_state.converted_filename,  # type: ignore
-        mime="application/octet-stream",
-        type="primary",
-        use_container_width=True
-    )
