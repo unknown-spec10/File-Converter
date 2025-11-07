@@ -1,0 +1,7 @@
+libreoffice
+libreoffice-writer
+libreoffice-calc
+libreoffice-impress
+tesseract-ocr
+tesseract-ocr-eng
+poppler-utils

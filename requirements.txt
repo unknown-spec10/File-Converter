@@ -1,0 +1,13 @@
+pdf2docx
+python-docx
+docx2pdf
+PyPDF2
+Pillow
+pandas
+openpyxl
+pdf2image
+pdfplumber
+pytesseract
+groq
+python-dotenv
+streamlit
